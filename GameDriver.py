@@ -27,11 +27,16 @@ class GameDriver(webdriver.Chrome):
     def take_screenshot(self, by=By.CLASS_NAME, value='runner-canvas'):
         return self.find_element(by, value).screenshot_as_png
 
-    def run_loop(self):
-        time.sleep(1)
-        self.send_key()
-        time.sleep(3.5)
+    def take_n_screenshot(self, by=By.CLASS_NAME, value='runner-canvas', n=4):
+        for _ in range(n):
+            yield self.take_screenshot(by, value)
 
-        while not self.get_game_prop('crashed'):
-            self.send_key()
-            yield self.take_screenshot()
+    def run_loop(self):
+        time.sleep(0.1)
+        self.send_key()
+        time.sleep(0.1)
+
+        key = Keys.ARROW_UP
+        for _ in range(10):  # not self.get_game_prop('crashed'):
+            self.send_key(key)
+            key = yield self.take_n_screenshot()
