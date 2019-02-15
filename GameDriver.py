@@ -15,7 +15,7 @@ class GameDriver(webdriver.Chrome):
 
         super().__init__(executable_path, options=self.chrome_options)
         self.actions = webdriver.ActionChains(self)
-        super().get('https://chromedino.com/')
+        super().get('https://chromedino.com/')  # The default url doesn't work with headless
 
     def get_game_prop(self, prop):
         return super().execute_script('return window.Runner()["%s"]' % prop)
@@ -32,11 +32,12 @@ class GameDriver(webdriver.Chrome):
             yield self.take_screenshot(by, value)
 
     def run_loop(self):
-        time.sleep(0.1)
+        time.sleep(1)
         self.send_key()
-        time.sleep(0.1)
+        time.sleep(3)
 
         key = Keys.ARROW_UP
-        for _ in range(10):  # not self.get_game_prop('crashed'):
+        while not self.get_game_prop('crashed'):
             self.send_key(key)
             key = yield self.take_n_screenshot()
+            yield
