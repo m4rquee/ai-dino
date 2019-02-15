@@ -1,19 +1,24 @@
-import time
+from io import BytesIO
+
+from PIL import Image
 
 from GameDriver import GameDriver
 
-game_driver = GameDriver()
-
 print('Starting session!\n')
 
-for i in range(1, 11):
-    print('\nStarting %ith game' % i)
-    game_driver.send_key()
+imgs = []
+game_driver = GameDriver()
 
-    game_driver.run_loop()
+for i in range(10):
+    print('\nStarting %ith game' % (i + 1))
+
+    imgs.extend(game_driver.run_loop())
     print('Score:', game_driver.get_game_prop('distanceRan'))
-    time.sleep(1)
 
 game_driver.quit()
 
-print('Game session')
+for i, base in enumerate(imgs):
+    img = Image.open(BytesIO(base))
+    img.save('img-%s.png' % i)
+
+print('Session ended')
