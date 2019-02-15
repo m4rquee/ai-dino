@@ -1,6 +1,5 @@
-from io import BytesIO
-
 from PIL import Image
+from io import BytesIO
 
 from GameDriver import GameDriver
 
@@ -18,7 +17,7 @@ for i in range(10):
 game_driver.quit()
 
 for i, base in enumerate(imgs):
-    img = Image.open(BytesIO(base))
+    img = Image.open(BytesIO(base)).crop((0, 0, 350, 150))
     img.save('img-%s.png' % i)
 
 print('Session ended')
