@@ -6,8 +6,10 @@ from selenium.webdriver.common.keys import Keys
 
 class GameDriver(webdriver.Chrome):
     def __init__(self, executable_path='./chromedriver'):
+        self.keys = [Keys.ARROW_UP, Keys.ARROW_DOWN, Keys.NULL]
+
         self.chrome_options = webdriver.ChromeOptions()
-        self.chrome_options.add_argument('--headless')
+        # self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--no-sandbox')
         self.chrome_options.add_argument('--mute-audio')
         self.chrome_options.add_argument('--disable-extensions')
@@ -27,11 +29,12 @@ class GameDriver(webdriver.Chrome):
     def take_screenshot(self, by=By.CLASS_NAME, value='runner-canvas'):
         return self.find_element(by, value).screenshot_as_png
 
-    def take_n_screenshot(self, by=By.CLASS_NAME, value='runner-canvas', n=4):
+    def take_n_screenshot(self, delay, n=4, by=By.CLASS_NAME, value='runner-canvas'):
         for _ in range(n):
             yield self.take_screenshot(by, value)
+            time.sleep(delay)
 
-    def run_loop(self):
+    def run_loop(self, delay):
         time.sleep(1)
         self.send_key()
         time.sleep(3)
@@ -39,5 +42,5 @@ class GameDriver(webdriver.Chrome):
         key = Keys.ARROW_UP
         while not self.get_game_prop('crashed'):
             self.send_key(key)
-            key = yield self.take_n_screenshot()
+            key = yield self.take_n_screenshot(delay)
             yield
