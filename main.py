@@ -7,6 +7,7 @@ print('Starting session!\n')
 
 brain = DinoNN((35, 0, 225, 130))
 game_driver = GameDriver()
+game_driver.init()
 
 for i in range(5):
     print('\nStarting %ith game' % (i + 1))
@@ -16,7 +17,7 @@ for i in range(5):
         q_values = brain.map(batch)
         game.send(game_driver.keys[np.argmax(q_values)])
 
-    print('Score:', game_driver.get_game_prop('distanceRan'))
+    print('Score:', game_driver.get_score())
 
 game_driver.quit()
 

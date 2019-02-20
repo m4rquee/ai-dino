@@ -12,6 +12,7 @@ class GameDriver(webdriver.Chrome):
         # self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--no-sandbox')
         self.chrome_options.add_argument('--mute-audio')
+        self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-extensions')
         self.chrome_options.add_argument('--window-size=720,480')
 
@@ -19,8 +20,19 @@ class GameDriver(webdriver.Chrome):
         self.actions = webdriver.ActionChains(self)
         super().get('https://chromedino.com/')  # The default url doesn't work with headless
 
+    def init(self):
+        self.send_key()
+        time.sleep(0.5)
+
     def get_game_prop(self, prop):
-        return super().execute_script('return window.Runner()["%s"]' % prop)
+        return super().execute_script('return Runner.instance_["%s"]' % prop)
+
+    def get_score(self):
+        return self.get_game_prop('distanceRan')
+
+    def restart(self):
+        self.execute_script('Runner.instance_.restart()')
+        time.sleep(3)
 
     def send_key(self, key=Keys.ARROW_UP):
         self.actions.send_keys(key)
@@ -35,12 +47,11 @@ class GameDriver(webdriver.Chrome):
             time.sleep(delay)
 
     def run_loop(self, delay):
-        time.sleep(1)
-        self.send_key()
-        time.sleep(3)
+        time.sleep(0.25)
+        self.restart()
 
         key = Keys.ARROW_UP
-        while not self.get_game_prop('crashed'):
+        while not self.get_game_prop('playing'):
             self.send_key(key)
             key = yield self.take_n_screenshot(delay)
             yield
