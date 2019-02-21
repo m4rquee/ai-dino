@@ -1,0 +1,2 @@
+class GameSate:
+    pass
