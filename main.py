@@ -9,9 +9,9 @@ brain = DinoNN((35, 0, 225, 130))
 game_driver = GameDriver()
 game_driver.init()
 
-for i in range(5):
-    print('\nStarting %ith game' % (i + 1))
-    game = game_driver.run_loop(0)
+for i in range(1, 6):
+    print('\nStarting %ith game' % i)
+    game = game_driver.run_loop()
 
     for batch in game:
         q_values = brain.map(batch)
